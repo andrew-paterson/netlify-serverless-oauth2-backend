@@ -12,7 +12,7 @@ AWS Lambda provides a useful means of doing this, and the docs below show how to
 
 ## Clone the netlify-serverless-oauth2-backend repo and install deps
 
-    git clone https://github.com/marksteele/netlify-serverless-oauth2-backend.git
+    git clone git@github.com:andrew-paterson/netlify-serverless-oauth2-backend.git
     cd netlify-serverless-oauth2-backend
     npm install
 
