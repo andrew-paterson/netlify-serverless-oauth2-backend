@@ -1,23 +1,23 @@
 service: serverless-oauth2
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs12.x
   stage: ${opt:stage, self:custom.defaultStage}
   environment:
-    GIT_HOSTNAME: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/GIT_HOSTNAME"
-    OAUTH_TOKEN_PATH: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/OAUTH_TOKEN_PATH"
-    OAUTH_AUTHORIZE_PATH: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/OAUTH_AUTHORIZE_PATH"
-    OAUTH_CLIENT_ID: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_ID"
-    OAUTH_CLIENT_SECRET:  "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_SECRET"
-    REDIRECT_URL: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/REDIRECT_URL"
-    OAUTH_SCOPES: "/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/OAUTH_SCOPES"
+    GIT_HOSTNAME: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/GIT_HOSTNAME"
+    OAUTH_TOKEN_PATH: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_TOKEN_PATH"
+    OAUTH_AUTHORIZE_PATH: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_AUTHORIZE_PATH"
+    OAUTH_CLIENT_ID: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_ID"
+    OAUTH_CLIENT_SECRET:  "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_SECRET"
+    REDIRECT_URL: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/REDIRECT_URL"
+    OAUTH_SCOPES: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_SCOPES"
     TZ: "utc"
   iamRoleStatements:
     - Effect: Allow
       Action:
         - ssm:DescribeParameters
         - ssm:GetParameters
-      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/ctrl-alt-del/oauth/${opt:stage, self:provider.stage}/*"
+      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/*"
     - Effect: Allow
       Action:
         - kms:Decrypt
@@ -26,8 +26,8 @@ provider:
 custom:
   defaultStage: dev
   kms_key:
-    "us-east-1":
-      prod: "01660d80-64fb-4444-9b21-bb15ac2f97ec"
+    "<YOUR_DEFAULT_REGION>":
+      prod: "<YOUR_KMS_KEY>"
       dev: "foo"
 
 functions:
