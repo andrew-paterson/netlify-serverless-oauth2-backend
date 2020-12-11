@@ -1,6 +1,10 @@
-# netlify-serverless-oauth2-backend
+# Netlify serverless for GitHub Oauth2 backend
 
 This is an AWS Lambda based service to help perform authentication to Github via an OAuth2 authentication process.
+
+In order to use the Netlify CMS with a Github repo, you need to be able to grant the Netlify CMS application access to your Github account or organisation, using Github's OAuth2 service. When you create an OAuth application in Github (See below) you have to provide a callback URL, and so you need a server running whicvh will respond to that callback URL. 
+
+AWS Lambda provides a useful means of doing this, and the docs below show how to set up your AWS account, and then use the NPOM serverless module to easily create your Lambda application, which will give you the callback URL that Github nbeeds, and will reposnd to that URL whenever someone authenticates.
 
 ## Install the serverless npm module globally
 
