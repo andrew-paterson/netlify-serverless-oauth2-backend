@@ -76,98 +76,15 @@ In the response you will see something like `arn:aws:kms:eu-west-1:891873474258:
 
 ## Update serverless.yml
 
-This file is at the root of the `netlify-serverless-oauth2-backend` repo, which you cloned above.
-
-Replace the contents of this file with the following:
-
-```
-service: serverless-oauth2
-provider:
-  name: aws
-  runtime: nodejs12.x
-  stage: ${opt:stage, self:custom.defaultStage}
-  environment:
-    GIT_HOSTNAME: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/GIT_HOSTNAME"
-    OAUTH_TOKEN_PATH: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_TOKEN_PATH"
-    OAUTH_AUTHORIZE_PATH: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_AUTHORIZE_PATH"
-    OAUTH_CLIENT_ID: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_ID"
-    OAUTH_CLIENT_SECRET:  "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_CLIENT_SECRET"
-    REDIRECT_URL: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/REDIRECT_URL"
-    OAUTH_SCOPES: "/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/OAUTH_SCOPES"
-    TZ: "utc"
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - ssm:DescribeParameters
-        - ssm:GetParameters
-      Resource: "arn:aws:ssm:${opt:region, self:provider.region}:*:parameter/<YOUR_AWS_PROFILE_NAME>/oauth/${opt:stage, self:provider.stage}/*"
-    - Effect: Allow
-      Action:
-        - kms:Decrypt
-      Resource: "arn:aws:kms:${opt:region, self:provider.region}:*:key/${self:custom.kms_key.${opt:region, self:provider.region}.${self:provider.stage}}"
-
-custom:
-  defaultStage: dev
-  kms_key:
-    "<YOUR_DEFAULT_REGION>":
-      prod: "<YOUR_KMS_KEY>"
-      dev: "foo"
-
-functions:
-  auth:
-    handler: auth.auth
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: /auth
-          method: get
-          cors: true               
-  callback:
-    handler: auth.callback
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: /callback
-          method: get
-          cors: true
-  success:
-    handler: auth.success
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: /success
-          method: get
-          cors: true  
-  default:
-    handler: auth.default
-    memorySize: 128
-    timeout: 5
-    events:
-      - http:
-          path: /
-          method: get
-          cors: true 
-
-plugins:
-  - serverless-plugin-optimize
-  - serverless-offline
-
-package:
-  individually: true
-```
-
-The replace each of `<YOUR_DEFAULT_REGION>`, `<YOUR_AWS_PROFILE_NAME>` and `<YOUR_KMS_KEY>` witht eh relavant values obtained above.
+In `serverless.yml` at the root of the `netlify-serverless-oauth2-backend` repo, replace each of `<YOUR_DEFAULT_REGION>`, `<YOUR_AWS_PROFILE_NAME>` and `<YOUR_KMS_KEY>` with the relavant values obtained above.
 
 ## Deploy the Lambda function
 
 `sls deploy -s <STAGE> --aws-profile <YOUR_AWS_PROFILE_NAME> --region <YOUR_DEFAULT_REGION>`
 
-`<STAGE>` above chooses which stage listed under `kms_key` in `serverless.yml` to use. Most likely `prod` as this is where uypou have just addded your AWS KMS key id.
+`<STAGE>` above chooses which stage listed under `custom > kms_key` in `serverless.yml` to use. Most likely `prod` as this is where you have just addded your AWS KMS key id.
 
-This command will gebnerate your serverless application in your AWS account. This will include:
+This command will generate your serverless application in your AWS account. This will include:
 
 * 1 AWS Lambda application
 * 4 AWS Lamnda functions
@@ -199,7 +116,7 @@ functions:
 layers:
   None
 ```
-
+Keep this response handy.
 ## Create an OAuth app in Github
 
 Go to go to [https://github.com/settings/applications/new](https://github.com/settings/applications/new), or in your github.com account, go to `Settings > Developers > OAuth Apps` and click `New OAuth App`.
@@ -232,7 +149,7 @@ In there, you'll want to create the following parameters/values (as SecureString
 
 ## Update your Netlify CMS config file
 
-Find the `config.yml` file at the root of your netlify CSM `admin` directory.
+Find the `config.yml` file at the root of your netlify CMS `admin` directory.
 
 ```
 backend:
@@ -242,6 +159,7 @@ backend:
   auth_endpoint: <SERVERLESS_APP_AUTH_ENDPOINT>
 ```
 
-For `base_url` use the base URL of your serverless application. This is the base url if the endpioints listed in the response top the the response to the `sls deploy` command. In the above example, the base url would be `https://9s9ttkn75e.execute-api.eu-west-1.amazonaws.com`.
+For `base_url` use the base URL of your serverless application. This is the base url if the endpioints listed in the response top the the response to the `sls deploy` command. In the above example, the base url would be `https://1a2bcde34f.execute-api.eu-west-1.amazonaws.com`.
+
 
 For `auth_endpoint` add the pathname of your `<SERVERLESS_APP_AUTH_ENDPOINT>` - ie the part after the base irl. In the above example this would be `/prod/auth`.
